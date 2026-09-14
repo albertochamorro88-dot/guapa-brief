@@ -71,6 +71,8 @@
   .chip span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid var(--line-2);border-radius:999px;font-size:15px;color:#e5e5e5;transition:all .15s;user-select:none}
   .chip input:checked + span{background:var(--white);color:var(--black);border-color:var(--white);font-weight:600}
   .chip input:focus-visible + span{outline:2px solid var(--orange);outline-offset:2px}
+  input.other{margin-top:2px}
+  input.other[hidden]{display:none}
   .sw{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
 
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -146,9 +148,12 @@ const SECTIONS = [
     {id:"berraca", t:"En Colombia, guapa también es berraca. ¿Qué significa para ustedes ser guapa?", type:"textarea", hint:"Una mujer, un momento o una frase que lo resuma.", ph:"Ser guapa es..."},
     {id:"mision", t:"¿Qué cambia en la vida de una mujer después de pasar por Guapa?", type:"textarea", ph:"Antes llega sintiéndose... y se va..."},
     {id:"vision", t:"¿Cómo se imaginan Guapa en 5 años?", type:"textarea", ph:"Una comunidad de..., un teatro propio, una línea de productos..."},
-    {id:"valores", t:"Elige los valores que más representan a Guapa", type:"chips", hint:"Máximo 5. Si falta alguno, escríbelo abajo.", max:5,
+    {id:"valores", t:"Elige los valores que más representan a Guapa", type:"chips", hint:"Máximo 5.", max:5,
       opts:["Valentía","Autenticidad","Sororidad","Libertad","Espiritualidad","Fuerza","Sensualidad","Alegría","Disciplina","Sanación","Rebeldía","Elegancia","Arte","Raíces"]},
-    {id:"valores_otro", t:"Otros valores", type:"text", opt:true, ph:"Escríbelos separados por comas"}
+    {id:"emociones", t:"¿Qué debe sentir una mujer la primera vez que ve la marca?", type:"chips", hint:"Máximo 3.", max:3,
+      opts:["Poder","Deseo","Paz","Orgullo","Confianza","Inspiración","Pertenencia","Libertad"]},
+    {id:"espiritualidad", t:"¿Qué tipo de espiritualidad vive Guapa?", type:"chips", hint:"Esto evita usar símbolos que no las representen.",
+      opts:["Holística y energética","Ancestral y de raíces","Cristiana o religiosa","Meditación y consciencia","Lo sagrado femenino","Sin religión, desde lo emocional"]}
   ]},
   { id:"oferta", title:"Lo que hacen", intro:"Qué ofrece Guapa hoy y qué quiere vender.", qs:[
     {id:"lineas", t:"¿Qué ofrece Guapa?", type:"chips", hint:"Marca todo lo que aplique.",
@@ -194,7 +199,13 @@ const SECTIONS = [
       opts:["Solo la palabra","Palabra y un símbolo","Que Grafiqo proponga"]},
     {id:"simbolo", t:"Si hay símbolo, ¿qué debería evocar?", type:"chips", opt:true,
       opts:["Labios","Corona","Llama o fuego","Luna","Máscara de teatro","Corazón","Mano o puño","Flor"]},
-    {id:"marcas_gusta", t:"Marcas, cuentas o webs cuyo estilo les encanta", type:"textarea", hint:"Pega los links o escribe los @ de Instagram. Pueden ser de cualquier sector.", ph:"@... , www..."},
+    {id:"tipografia", t:"¿Cómo imaginan las letras de GUAPA?", type:"chips", hint:"Puedes elegir hasta 2.", max:2,
+      opts:["Elegante con serifa","Manuscrita, como una firma","Moderna y fuerte","Clásica de cine o teatro","Que Grafiqo proponga"]},
+    {id:"eslogan", t:"¿Tienen un eslogan o una frase que acompañe el nombre?", type:"text", opt:true, ph:"Ej: Guapa, mujer berraca. O escribe «todavía no»"},
+    {id:"usos", t:"¿Dónde se va a ver más el logo?", type:"chips", hint:"Marca todo lo que aplique.",
+      opts:["Labial y empaque","Redes sociales","Escenario y pendones","Página web","Camisetas y merch","Material de talleres","Certificados","Letreros"]},
+    {id:"cultura", t:"¿Hay elementos de Colombia o de sus raíces que quieran incluir o evitar?", type:"textarea", opt:true, ph:"Ej: incluir flores del Caribe, evitar la bandera"},
+    {id:"marcas_gusta", t:"Marcas, cuentas o webs cuyo estilo les encanta", type:"textarea", hint:"Pega links, @ de Instagram o un tablero de Pinterest. Pueden ser de cualquier sector.", ph:"@... , www..."},
     {id:"no_gusta", t:"¿Qué no quieren ver en su marca?", type:"textarea", opt:true, ph:"Ej: nada infantil, nada que parezca de salón de belleza"}
   ]},
   { id:"mercado", title:"Mercado", intro:"Para diferenciar a Guapa de lo que ya existe.", qs:[
@@ -213,6 +224,9 @@ const SECTIONS = [
   { id:"proyecto", title:"El proyecto", intro:"Últimos detalles para organizar el trabajo.", qs:[
     {id:"fecha", t:"¿Tienen una fecha importante? (lanzamiento, evento, obra)", type:"text", ph:"Ej: lanzamiento del labial en noviembre"},
     {id:"aprueba", t:"¿Quién da la aprobación final del diseño?", type:"text", ph:"Nombre o nombres"},
+    {id:"registro", t:"¿Ya registraron el nombre Guapa como marca?", type:"choice",
+      opts:["Sí","Está en trámite","Todavía no","No sabemos"]},
+    {id:"idiomas", t:"¿En qué idiomas va a hablar la marca?", type:"chips", opts:["Español","Inglés"]},
     {id:"extra", t:"¿Algo más que deba saber?", type:"textarea", opt:true, ph:"Lo que no te pregunté y crees que es importante"}
   ]}
 ];
@@ -247,18 +261,27 @@ function renderQ(q){
       const checked = multi ? sel.includes(label) : sel === label;
       return `<label class="chip"><input type="${multi?"checkbox":"radio"}" id="${fid}_${i}" name="${fid}" data-q="${q.id}" value="${esc(label)}" ${checked?"checked":""}><span>${color?`<i class="sw" style="background:${color}"></i>`:""}${label}</span></label>`;
     }).join("");
-    return `<div class="q"><div class="t">${q.t}${opt}</div>${hint}<div class="chips" role="group">${items}</div></div>`;
+    const otherOn = multi ? sel.includes("Otra") : sel === "Otra";
+    const other = `<label class="chip"><input type="${multi?"checkbox":"radio"}" id="${fid}_otra_opt" name="${fid}" data-q="${q.id}" value="Otra" ${otherOn?"checked":""}><span>Otra</span></label>`;
+    return `<div class="q"><div class="t">${q.t}${opt}</div>${hint}<div class="chips" role="group">${items}${other}</div>${otherField(q, otherOn)}</div>`;
   }
   if (q.type === "cards") {
     const sel = v || [];
     const items = q.opts.map((o, i) => `<label class="card"><input type="checkbox" id="${fid}_${i}" data-q="${q.id}" value="${esc(o.v)}" ${sel.includes(o.v)?"checked":""}><span class="c"><span class="art" style="${o.art}"></span><span class="nm">${o.v}<small>${o.d}</small></span></span></label>`).join("");
-    return `<div class="q"><div class="t">${q.t}${opt}</div>${hint}<div class="cards">${items}</div></div>`;
+    const otherOn = sel.includes("Otra");
+    const other = `<div class="chips"><label class="chip"><input type="checkbox" id="${fid}_otra_opt" data-q="${q.id}" value="Otra" ${otherOn?"checked":""}><span>Otro estilo</span></label></div>`;
+    return `<div class="q"><div class="t">${q.t}${opt}</div>${hint}<div class="cards">${items}</div>${other}${otherField(q, otherOn)}</div>`;
   }
   if (q.type === "scale") {
     const val = v ?? 50;
     return `<div class="q"><label class="t" for="${fid}">${q.t}</label><div class="scale"><input type="range" id="${fid}" data-q="${q.id}" min="0" max="100" step="5" value="${val}" aria-valuetext="${q.a} a ${q.b}"><div class="poles"><span>${q.a}</span><span>${q.b}</span></div></div></div>`;
   }
   return "";
+}
+
+function otherField(q, on){
+  const id = q.id + "_otra";
+  return `<input type="text" class="other" id="f_${id}" data-q="${id}" aria-label="Escribe otra opción" placeholder="Escribe cuál" value="${esc(state[id]||"")}" ${on?"":"hidden"}>`;
 }
 
 function build(){
@@ -270,7 +293,7 @@ function build(){
         <p class="lead">Este cuestionario es la base de su identidad de marca. Cada respuesta se convierte en una decisión de diseño: el logo, los colores, la voz y la forma en que Guapa se ve en redes y en su página web.</p>
         <div class="facts">
           <div><strong>9</strong><span>secciones</span></div>
-          <div><strong>15</strong><span>minutos aprox.</span></div>
+          <div><strong>20</strong><span>minutos aprox.</span></div>
           <div><strong>0</strong><span>respuestas malas</span></div>
         </div>
         <ul class="tips">
@@ -317,6 +340,14 @@ function collect(el){
     state[id] = vals;
   } else if (el.type === "radio") {
     state[id] = el.value;
+  }
+  if (el.type === "checkbox" || el.type === "radio") {
+    const field = document.getElementById("f_" + id + "_otra");
+    if (field) {
+      const on = Array.isArray(state[id]) ? state[id].includes("Otra") : state[id] === "Otra";
+      field.hidden = !on;
+      if (on && el.value === "Otra" && el.checked) field.focus();
+    }
   } else if (el.type === "range") {
     state[id] = Number(el.value);
   } else {
@@ -332,7 +363,12 @@ function summary(){
     s.qs.forEach(q => {
       let v = state[q.id];
       if (q.type === "scale") { v = v ?? 50; v = `${v}/100 (0 = ${q.a}, 100 = ${q.b})`; }
-      else if (Array.isArray(v)) v = v.join(", ");
+      else {
+        const extra = state[q.id + "_otra"];
+        const fix = x => x === "Otra" ? "Otra: " + (extra || "(sin detalle)") : x;
+        if (Array.isArray(v)) v = v.map(fix).join(", ");
+        else if (v) v = fix(v);
+      }
       if (v === undefined || v === "") v = "(sin respuesta)";
       lines.push(`• ${q.t.replace(/<[^>]+>/g,"")}`, `  ${v}`);
     });
