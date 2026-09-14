@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Brief Guapa</title>
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --black:#000000; --ink:#0d0d0d; --line:#262626; --line-2:#3a3a3a;
+    --white:#ffffff; --mute:#a3a3a3; --dim:#6b6b6b;
+    --orange:#FF4D00; --orange-soft:rgba(255,77,0,.14);
+    --serif:'DM Serif Display', Georgia, 'Times New Roman', serif;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, Menlo, monospace;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box}
+  html,body{background:var(--black);color:var(--white)}
+  body{font-family:var(--sans);font-size:16px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding-inline:20px;padding-block:0 140px}
+
+  /* barra superior */
+  .top{position:sticky;top:0;z-index:5;background:var(--black);padding-block:14px 12px;border-bottom:1px solid var(--line)}
+  .top-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .brand{font-weight:800;letter-spacing:.14em;font-size:13px}
+  .brand b{color:var(--orange)}
+  .step-label{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+  .bar{height:3px;background:var(--line);margin-top:12px;border-radius:2px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--orange);transition:width .4s cubic-bezier(.16,1,.3,1)}
+
+  /* portada */
+  .intro{padding-block:44px 8px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(44px,13vw,76px);line-height:.98;margin:14px 0 18px;text-wrap:balance;letter-spacing:-.01em}
+  h1 em{color:var(--orange)}
+  .lead{color:#d4d4d4;font-size:17px;max-width:34em;margin:0}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:28px 0 8px}
+  .facts div{background:var(--black);padding:14px 12px}
+  .facts strong{display:block;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1}
+  .facts span{font-size:12px;color:var(--mute)}
+  .tips{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:10px;color:#cfcfcf;font-size:15px}
+  .tips li{display:flex;gap:10px}
+  .tips li::before{content:"";flex:none;width:6px;height:6px;margin-top:9px;background:var(--orange)}
+
+  /* secciones */
+  section.step{padding-block:36px 0}
+  section.step[hidden]{display:none}
+  .sec-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,9vw,48px);line-height:1.02;margin:10px 0 10px;text-wrap:balance}
+  .sec-head p{color:var(--mute);margin:0 0 8px;max-width:36em}
+  .q{padding-block:26px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+  .q:last-child{border-bottom:0}
+  .q label.t, .q .t{font-weight:600;font-size:17px;line-height:1.35;display:block}
+  .q .opt{font-family:var(--mono);font-size:11px;color:var(--dim);font-weight:400;margin-left:6px;letter-spacing:.04em;text-transform:uppercase}
+  .hint{font-size:14px;color:var(--mute);margin-top:-4px}
+  .hint i{color:#cfcfcf;font-style:normal}
+  input[type=text],input[type=email],input[type=tel],input[type=url],textarea{
+    width:100%;background:var(--ink);color:var(--white);border:1px solid var(--line-2);border-radius:10px;
+    font:inherit;font-size:16px;padding:14px 14px;outline:none;transition:border-color .2s}
+  textarea{min-height:112px;resize:vertical}
+  input::placeholder,textarea::placeholder{color:#5c5c5c}
+  input:focus,textarea:focus{border-color:var(--orange)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{position:relative}
+  .chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+  .chip span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid var(--line-2);border-radius:999px;font-size:15px;color:#e5e5e5;transition:all .15s;user-select:none}
+  .chip input:checked + span{background:var(--white);color:var(--black);border-color:var(--white);font-weight:600}
+  .chip input:focus-visible + span{outline:2px solid var(--orange);outline-offset:2px}
+  .sw{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
+
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .card{position:relative}
+  .card input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;z-index:2}
+  .card .c{display:block;border:1px solid var(--line-2);border-radius:12px;overflow:hidden;transition:border-color .15s}
+  .card .art{height:74px;display:flex;align-items:center;justify-content:center}
+  .card .nm{display:block;padding:10px 12px 12px;font-size:14px;font-weight:600}
+  .card .nm small{display:block;font-weight:400;color:var(--mute);font-size:12px;margin-top:2px}
+  .card input:checked + .c{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange)}
+  .card input:focus-visible + .c{outline:2px solid var(--orange);outline-offset:2px}
+
+  .scale{display:grid;gap:8px}
+  .poles{display:flex;justify-content:space-between;font-size:13px;color:#cfcfcf;gap:12px}
+  .poles span:last-child{text-align:right}
+  input[type=range]{width:100%;accent-color:var(--orange);height:32px}
+
+  /* navegación */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:linear-gradient(transparent,var(--black) 30%);padding-inline:20px;padding-block:28px 18px}
+  .nav-in{max-width:640px;margin:0 auto;display:flex;gap:10px}
+  button{font:inherit;cursor:pointer}
+  .btn{flex:1;min-height:54px;border-radius:12px;border:1px solid var(--line-2);background:var(--black);color:var(--white);font-weight:700;font-size:15px;letter-spacing:.02em}
+  .btn.primary{background:var(--orange);border-color:var(--orange);color:#000}
+  .btn.ghost{flex:0 0 auto;padding-inline:20px}
+  .btn:focus-visible{outline:2px solid var(--white);outline-offset:2px}
+  .btn[hidden]{display:none}
+  .saved{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:center;margin-top:8px}
+
+  /* final */
+  .done-box{border:1px solid var(--line-2);border-radius:14px;padding:22px;display:grid;gap:14px;margin-top:22px}
+  .status{font-size:15px;color:#d4d4d4}
+  .status.ok{color:var(--white)}
+  .status.ok::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin-right:8px;vertical-align:middle}
+  .send{display:grid;gap:10px}
+  .send .btn{flex:none;width:100%}
+  .foot{margin-top:28px;font-size:13px;color:var(--dim)}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap" style="padding-block:0">
+    <div class="top-row">
+      <div class="brand">GRAFIQO<b>.</b></div>
+      <div class="step-label" id="stepLabel">Inicio</div>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="steps"></div>
+</main>
+
+<nav class="nav">
+  <div class="nav-in">
+    <button class="btn ghost" id="backBtn" type="button" hidden>Atrás</button>
+    <button class="btn primary" id="nextBtn" type="button">Empezar</button>
+  </div>
+  <div class="saved" id="savedNote">Tus respuestas se guardan en este celular mientras avanzas.</div>
+</nav>
+
+<script>
+const SECTIONS = [
+  { id:"ustedes", title:"Quiénes son", intro:"Empecemos por las personas detrás de Guapa.", qs:[
+    {id:"nombre", t:"Tu nombre y tu rol en Guapa", type:"text", ph:"Ej: Laura Gómez, cofundadora"},
+    {id:"contacto", t:"Tu WhatsApp o correo", type:"text", ph:"Para escribirte si tengo dudas"},
+    {id:"equipo", t:"¿Quiénes están detrás de Guapa?", type:"textarea", hint:"Nombres, a qué se dedica cada una, qué aporta.", ph:"Somos tres mujeres..."},
+    {id:"origen", t:"¿Cómo nació Guapa?", type:"textarea", hint:"Cuéntalo como se lo contarías a una amiga. El momento, la razón, la historia real.", ph:"Todo empezó cuando..."},
+    {id:"lugar", t:"¿Dónde están hoy y hasta dónde quieren llegar?", type:"text", ph:"Ej: Medellín, y en 2 años toda Colombia y Miami"}
+  ]},
+  { id:"esencia", title:"La esencia", intro:"Lo que Guapa cree y defiende. Aquí nace todo el diseño.", qs:[
+    {id:"frase", t:"Si tuvieran que explicar Guapa en una sola frase, ¿cuál sería?", type:"text", ph:"Guapa es..."},
+    {id:"berraca", t:"En Colombia, guapa también es berraca. ¿Qué significa para ustedes ser guapa?", type:"textarea", hint:"Una mujer, un momento o una frase que lo resuma.", ph:"Ser guapa es..."},
+    {id:"mision", t:"¿Qué cambia en la vida de una mujer después de pasar por Guapa?", type:"textarea", ph:"Antes llega sintiéndose... y se va..."},
+    {id:"vision", t:"¿Cómo se imaginan Guapa en 5 años?", type:"textarea", ph:"Una comunidad de..., un teatro propio, una línea de productos..."},
+    {id:"valores", t:"Elige los valores que más representan a Guapa", type:"chips", hint:"Máximo 5. Si falta alguno, escríbelo abajo.", max:5,
+      opts:["Valentía","Autenticidad","Sororidad","Libertad","Espiritualidad","Fuerza","Sensualidad","Alegría","Disciplina","Sanación","Rebeldía","Elegancia","Arte","Raíces"]},
+    {id:"valores_otro", t:"Otros valores", type:"text", opt:true, ph:"Escríbelos separados por comas"}
+  ]},
+  { id:"oferta", title:"Lo que hacen", intro:"Qué ofrece Guapa hoy y qué quiere vender.", qs:[
+    {id:"lineas", t:"¿Qué ofrece Guapa?", type:"chips", hint:"Marca todo lo que aplique.",
+      opts:["Talleres de empoderamiento","Retiros espirituales","Círculos de mujeres","Obras de teatro","Conferencias","Mentorías","Labial rojo","Otros productos"]},
+    {id:"principal", t:"¿Cuál es la actividad principal, la que más ingresos genera o generará?", type:"text", ph:"Ej: los talleres presenciales"},
+    {id:"teatro", t:"¿Cómo se conecta el teatro con Guapa?", type:"textarea", opt:true, hint:"Obras propias, técnicas de teatro en los talleres, presentaciones en vivo...", ph:""},
+    {id:"labial", t:"Háblame del labial rojo", type:"textarea", hint:"¿Tiene nombre? ¿Por qué rojo? ¿Qué debe sentir una mujer cuando se lo pone?", ph:"El labial se llama... y representa..."},
+    {id:"labial_prod", t:"¿En qué etapa está el labial?", type:"choice",
+      opts:["Solo es una idea","Buscando fabricante","Ya tenemos muestras","Ya se está vendiendo"]},
+    {id:"labial_datos", t:"Precio estimado, dónde se venderá y si ya tiene empaque", type:"textarea", opt:true, ph:"Ej: 65.000 COP, en la web y en los talleres, todavía sin caja"}
+  ]},
+  { id:"mujer", title:"Su mujer ideal", intro:"Diseñamos para ella, no para todo el mundo.", qs:[
+    {id:"edad", t:"¿Qué edad tiene?", type:"chips", opts:["18 a 24","25 a 34","35 a 44","45 a 54","55 o más"]},
+    {id:"perfil", t:"Descríbela: a qué se dedica, cómo es su día, qué le gusta", type:"textarea", ph:"Es una mujer que..."},
+    {id:"dolor", t:"¿Qué le duele o qué le falta cuando llega a Guapa?", type:"textarea", ph:"Se siente..."},
+    {id:"sueno", t:"¿Qué sueña o qué quiere lograr?", type:"textarea", ph:"Quiere..."},
+    {id:"redes_publico", t:"¿Dónde pasa su tiempo?", type:"chips", opts:["Instagram","TikTok","Facebook","YouTube","WhatsApp","Eventos presenciales","Iglesia o grupos espirituales","Teatro y cultura"]}
+  ]},
+  { id:"personalidad", title:"Personalidad", intro:"Mueve cada barra hacia donde está Guapa. No hay respuestas correctas.", qs:[
+    {id:"p1", type:"scale", t:"Tono", a:"Clásica y elegante", b:"Irreverente y atrevida"},
+    {id:"p2", type:"scale", t:"Energía", a:"Suave y serena", b:"Intensa y poderosa"},
+    {id:"p3", type:"scale", t:"Mundo", a:"Mística y espiritual", b:"Urbana y terrenal"},
+    {id:"p4", type:"scale", t:"Estilo", a:"Minimalista", b:"Maximalista, mucho brillo"},
+    {id:"p5", type:"scale", t:"Actitud", a:"Seria y profunda", b:"Divertida y cercana"},
+    {id:"p6", type:"scale", t:"Público", a:"Exclusiva, de lujo", b:"Popular, para todas"},
+    {id:"mujer_marca", t:"Si Guapa fuera una mujer famosa o un personaje, ¿quién sería?", type:"text", hint:"Puede ser real o de ficción. Ej: <i>Frida Kahlo, Shakira, Sofía Vergara, Lady Gaga</i>.", ph:""},
+    {id:"palabras_si", t:"Palabras que Guapa sí usaría", type:"text", ph:"Ej: berraca, poderosa, diosa, reina"},
+    {id:"palabras_no", t:"Palabras o actitudes que Guapa nunca usaría", type:"text", ph:"Ej: débil, sumisa, frases de autoayuda vacías"}
+  ]},
+  { id:"visual", title:"Lo visual", intro:"Colores, estilo y lo que debe transmitir el logo.", qs:[
+    {id:"colores", t:"Confirma los colores que quieren", type:"chips", hint:"Marca los que sí van.",
+      opts:[["Rojo","#D90F1E"],["Dorado","#C9A24B"],["Negro","#000000"],["Blanco","#FFFFFF"],["Vino","#6B0F1A"],["Nude","#D8B49B"]]},
+    {id:"colores_no", t:"¿Algún color prohibido?", type:"text", opt:true, ph:"Ej: rosado pastel"},
+    {id:"estilo", t:"¿Qué estilo se acerca más a Guapa?", type:"cards", hint:"Puedes elegir hasta 2.", max:2, opts:[
+      {v:"Lujo dramático", d:"Negro, dorado, brillo", art:"background:linear-gradient(135deg,#000 40%,#8a6a22 70%,#e8c872);"},
+      {v:"Teatral", d:"Telón, escenario, luz", art:"background:repeating-linear-gradient(90deg,#7a0010 0 10px,#b3001b 10px 22px);"},
+      {v:"Místico", d:"Luna, velas, energía", art:"background:radial-gradient(circle at 50% 60%,#e8c872 0 10%,#3a0a14 38%,#0a0a0a 75%);"},
+      {v:"Latina urbana", d:"Calle, color, actitud", art:"background:linear-gradient(90deg,#D90F1E 0 33%,#111 33% 66%,#fff 66%);"},
+      {v:"Minimal elegante", d:"Blanco, aire, detalle", art:"background:#f5f1ea;box-shadow:inset 0 -18px 0 #D90F1E;"},
+      {v:"Vintage bolero", d:"Clásico, cine, nostalgia", art:"background:linear-gradient(#e9dcc3,#caa981);box-shadow:inset 0 0 0 8px #6B0F1A;"}
+    ]},
+    {id:"logo", t:"El logo será la palabra GUAPA. ¿Quieren además un símbolo?", type:"choice",
+      opts:["Solo la palabra","Palabra y un símbolo","Que Grafiqo proponga"]},
+    {id:"simbolo", t:"Si hay símbolo, ¿qué debería evocar?", type:"chips", opt:true,
+      opts:["Labios","Corona","Llama o fuego","Luna","Máscara de teatro","Corazón","Mano o puño","Flor"]},
+    {id:"marcas_gusta", t:"Marcas, cuentas o webs cuyo estilo les encanta", type:"textarea", hint:"Pega los links o escribe los @ de Instagram. Pueden ser de cualquier sector.", ph:"@... , www..."},
+    {id:"no_gusta", t:"¿Qué no quieren ver en su marca?", type:"textarea", opt:true, ph:"Ej: nada infantil, nada que parezca de salón de belleza"}
+  ]},
+  { id:"mercado", title:"Mercado", intro:"Para diferenciar a Guapa de lo que ya existe.", qs:[
+    {id:"competencia", t:"¿Qué marcas, líderes o proyectos hacen algo parecido?", type:"textarea", ph:"Nombres o @ de Instagram"},
+    {id:"diferencia", t:"¿Qué tiene Guapa que ellas no tienen?", type:"textarea", ph:"Nosotras somos las únicas que..."}
+  ]},
+  { id:"digital", title:"Redes y web", intro:"Para mostrarles cómo se verían sus redes y su página.", qs:[
+    {id:"cuentas", t:"¿Qué cuentas tienen hoy?", type:"text", opt:true, ph:"@guapa..., o escribe «todavía no»"},
+    {id:"contenido", t:"¿Qué tipo de contenido quieren publicar?", type:"chips",
+      opts:["Frases y reflexiones","Videos hablando a cámara","Detrás de escena","Eventos y talleres","Testimonios","Producto (labial)","Teatro y ensayos","Tutoriales de maquillaje"]},
+    {id:"web_meta", t:"¿Qué es lo más importante que debe lograr la página web?", type:"choice",
+      opts:["Vender el labial","Inscribir a talleres o eventos","Que las contacten por WhatsApp","Contar la historia de Guapa"]},
+    {id:"material", t:"¿Qué material tienen?", type:"chips", hint:"Marca lo que ya exista.",
+      opts:["Fotos profesionales","Videos","Fotos del labial","Dominio web","Logo anterior","Textos sobre la marca","Nada todavía"]}
+  ]},
+  { id:"proyecto", title:"El proyecto", intro:"Últimos detalles para organizar el trabajo.", qs:[
+    {id:"fecha", t:"¿Tienen una fecha importante? (lanzamiento, evento, obra)", type:"text", ph:"Ej: lanzamiento del labial en noviembre"},
+    {id:"aprueba", t:"¿Quién da la aprobación final del diseño?", type:"text", ph:"Nombre o nombres"},
+    {id:"extra", t:"¿Algo más que deba saber?", type:"textarea", opt:true, ph:"Lo que no te pregunté y crees que es importante"}
+  ]}
+];
+
+const KEY = "guapa-brief-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { state = {}; }
+let current = -1; // -1 = portada, SECTIONS.length = final
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function persist(){
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function renderQ(q){
+  const opt = q.opt ? '<span class="opt">Opcional</span>' : "";
+  const hint = q.hint ? `<div class="hint">${q.hint}</div>` : "";
+  const fid = "f_" + q.id;
+  const v = state[q.id];
+  if (q.type === "text" || q.type === "textarea") {
+    const field = q.type === "text"
+      ? `<input type="text" id="${fid}" data-q="${q.id}" placeholder="${esc(q.ph||"")}" value="${esc(v||"")}">`
+      : `<textarea id="${fid}" data-q="${q.id}" placeholder="${esc(q.ph||"")}">${esc(v||"")}</textarea>`;
+    return `<div class="q"><label class="t" for="${fid}">${q.t}${opt}</label>${hint}${field}</div>`;
+  }
+  if (q.type === "chips" || q.type === "choice") {
+    const multi = q.type === "chips";
+    const sel = multi ? (v || []) : v;
+    const items = q.opts.map((o, i) => {
+      const [label, color] = Array.isArray(o) ? o : [o, null];
+      const checked = multi ? sel.includes(label) : sel === label;
+      return `<label class="chip"><input type="${multi?"checkbox":"radio"}" id="${fid}_${i}" name="${fid}" data-q="${q.id}" value="${esc(label)}" ${checked?"checked":""}><span>${color?`<i class="sw" style="background:${color}"></i>`:""}${label}</span></label>`;
+    }).join("");
+    return `<div class="q"><div class="t">${q.t}${opt}</div>${hint}<div class="chips" role="group">${items}</div></div>`;
+  }
+  if (q.type === "cards") {
+    const sel = v || [];
+    const items = q.opts.map((o, i) => `<label class="card"><input type="checkbox" id="${fid}_${i}" data-q="${q.id}" value="${esc(o.v)}" ${sel.includes(o.v)?"checked":""}><span class="c"><span class="art" style="${o.art}"></span><span class="nm">${o.v}<small>${o.d}</small></span></span></label>`).join("");
+    return `<div class="q"><div class="t">${q.t}${opt}</div>${hint}<div class="cards">${items}</div></div>`;
+  }
+  if (q.type === "scale") {
+    const val = v ?? 50;
+    return `<div class="q"><label class="t" for="${fid}">${q.t}</label><div class="scale"><input type="range" id="${fid}" data-q="${q.id}" min="0" max="100" step="5" value="${val}" aria-valuetext="${q.a} a ${q.b}"><div class="poles"><span>${q.a}</span><span>${q.b}</span></div></div></div>`;
+  }
+  return "";
+}
+
+function build(){
+  const intro = `
+    <section class="step" data-i="-1">
+      <div class="intro">
+        <div class="eyebrow">Brief de marca · Guapa</div>
+        <h1>Hagamos a <em>Guapa</em> inolvidable.</h1>
+        <p class="lead">Este cuestionario es la base de su identidad de marca. Cada respuesta se convierte en una decisión de diseño: el logo, los colores, la voz y la forma en que Guapa se ve en redes y en su página web.</p>
+        <div class="facts">
+          <div><strong>9</strong><span>secciones</span></div>
+          <div><strong>15</strong><span>minutos aprox.</span></div>
+          <div><strong>0</strong><span>respuestas malas</span></div>
+        </div>
+        <ul class="tips">
+          <li>Responde con tus palabras, como hablas normalmente.</li>
+          <li>Lo que no sepas, déjalo en blanco y seguimos.</li>
+          <li>Puedes cerrar y volver: tu avance queda guardado en este celular.</li>
+        </ul>
+      </div>
+    </section>`;
+  const secs = SECTIONS.map((s, i) => `
+    <section class="step" data-i="${i}" hidden>
+      <div class="sec-head">
+        <div class="eyebrow">Sección ${i+1} de ${SECTIONS.length}</div>
+        <h2>${s.title}</h2>
+        <p>${s.intro}</p>
+      </div>
+      ${s.qs.map(renderQ).join("")}
+    </section>`).join("");
+  const done = `
+    <section class="step" data-i="${SECTIONS.length}" hidden>
+      <div class="sec-head">
+        <div class="eyebrow">Listo</div>
+        <h2>Gracias. Con esto empezamos a crear.</h2>
+        <p>Envía tus respuestas con el botón de abajo. Grafiqo las revisa y te escribe con los siguientes pasos.</p>
+      </div>
+      <div class="done-box">
+        <div class="status" id="dbStatus">Preparando el envío...</div>
+        <div class="send">
+          <button class="btn primary" type="button" id="waBtn">Enviar por WhatsApp</button>
+          <button class="btn" type="button" id="mailBtn">Enviar por correo</button>
+          <button class="btn" type="button" id="copyBtn">Copiar mis respuestas</button>
+        </div>
+      </div>
+      <p class="foot">¿Quieres cambiar algo? Usa «Atrás» y edita. Tus respuestas siguen guardadas.</p>
+    </section>`;
+  $("#steps").innerHTML = intro + secs + done;
+}
+
+function collect(el){
+  const id = el.dataset.q; if (!id) return;
+  if (el.type === "checkbox") {
+    const q = SECTIONS.flatMap(s => s.qs).find(x => x.id === id);
+    const boxes = [...document.querySelectorAll(`input[data-q="${id}"]`)];
+    let vals = boxes.filter(b => b.checked).map(b => b.value);
+    if (q && q.max && vals.length > q.max) { el.checked = false; vals = vals.filter(x => x !== el.value); }
+    state[id] = vals;
+  } else if (el.type === "radio") {
+    state[id] = el.value;
+  } else if (el.type === "range") {
+    state[id] = Number(el.value);
+  } else {
+    state[id] = el.value;
+  }
+  persist();
+}
+
+function summary(){
+  const lines = ["BRIEF DE MARCA · GUAPA", ""];
+  SECTIONS.forEach((s, i) => {
+    lines.push(`== ${i+1}. ${s.title.toUpperCase()} ==`);
+    s.qs.forEach(q => {
+      let v = state[q.id];
+      if (q.type === "scale") { v = v ?? 50; v = `${v}/100 (0 = ${q.a}, 100 = ${q.b})`; }
+      else if (Array.isArray(v)) v = v.join(", ");
+      if (v === undefined || v === "") v = "(sin respuesta)";
+      lines.push(`• ${q.t.replace(/<[^>]+>/g,"")}`, `  ${v}`);
+    });
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
+function show(i){
+  current = i;
+  document.querySelectorAll("section.step").forEach(s => s.hidden = Number(s.dataset.i) !== i);
+  const total = SECTIONS.length;
+  $("#barFill").style.width = i < 0 ? "0%" : Math.min(100, ((i+1)/(total+1))*100) + "%";
+  $("#stepLabel").textContent = i < 0 ? "Inicio" : i >= total ? "Enviar" : `${i+1} / ${total}`;
+  $("#backBtn").hidden = i < 0;
+  $("#nextBtn").hidden = i >= total;
+  $("#nextBtn").textContent = i < 0 ? "Empezar" : i === total - 1 ? "Terminar" : "Siguiente";
+  $("#savedNote").hidden = i >= total;
+  window.scrollTo(0, 0);
+  try { localStorage.setItem(KEY + "-step", String(i)); } catch(e) {}
+  if (i >= total) submitToDb();
+}
+
+let dbSentFor = null;
+async function submitToDb(){
+  const status = $("#dbStatus");
+  const snapshot = JSON.stringify(state);
+  if (dbSentFor === snapshot) return;
+  status.className = "status";
+  status.textContent = "Guardando tus respuestas...";
+  let db = null;
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch(e) { db = null; }
+  if (!db) {
+    status.textContent = "Para que lleguen a Grafiqo, envíalas por WhatsApp o por correo con los botones de abajo.";
+    return;
+  }
+  try {
+    let docId;
+    try { docId = localStorage.getItem(KEY + "-doc"); } catch(e) {}
+    const ref = docId ? db.collection("respuestas").doc(docId) : db.collection("respuestas").doc();
+    await ref.set({ marca:"Guapa", nombre: state.nombre || "", contacto: state.contacto || "", respuestas: state, resumen: summary(), actualizado: new Date().toISOString() });
+    try { localStorage.setItem(KEY + "-doc", ref.id); } catch(e) {}
+    dbSentFor = snapshot;
+    status.className = "status ok";
+    status.textContent = "Respuestas recibidas por Grafiqo. Si quieres, avísanos también por WhatsApp.";
+  } catch(e) {
+    status.textContent = "No se pudieron guardar automáticamente. Envíalas por WhatsApp o por correo con los botones de abajo.";
+  }
+}
+
+build();
+document.addEventListener("input", e => collect(e.target));
+document.addEventListener("change", e => collect(e.target));
+$("#nextBtn").addEventListener("click", () => show(Math.min(current + 1, SECTIONS.length)));
+$("#backBtn").addEventListener("click", () => show(Math.max(current - 1, -1)));
+document.addEventListener("click", async e => {
+  if (e.target.id === "waBtn") {
+    window.open("https://wa.me/?text=" + encodeURIComponent(summary()), "_blank", "noopener");
+  } else if (e.target.id === "mailBtn") {
+    location.href = "mailto:hello@grafiqo.co?subject=" + encodeURIComponent("Brief de marca Guapa") + "&body=" + encodeURIComponent(summary());
+  } else if (e.target.id === "copyBtn") {
+    try { await navigator.clipboard.writeText(summary()); e.target.textContent = "Copiado. Pégalo en WhatsApp o correo"; }
+    catch(err) { e.target.textContent = "No se pudo copiar"; }
+  }
+});
+let startAt = -1;
+try { startAt = Number(localStorage.getItem(KEY + "-step") ?? -1); } catch(e) {}
+show(Number.isFinite(startAt) && startAt < SECTIONS.length ? startAt : -1);
+</script>
+
+</html>
