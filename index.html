@@ -294,13 +294,13 @@ function build(){
       <div class="sec-head">
         <div class="eyebrow">Listo</div>
         <h2>Gracias. Con esto empezamos a crear.</h2>
-        <p>Envía tus respuestas con el botón de abajo. Grafiqo las revisa y te escribe con los siguientes pasos.</p>
+        <p>Toca «Enviar respuestas». Grafiqo las revisa y te escribe con los siguientes pasos.</p>
       </div>
       <div class="done-box">
-        <div class="status" id="dbStatus">Preparando el envío...</div>
+        <div class="status" id="dbStatus">Toca «Enviar respuestas» para que lleguen a Grafiqo.</div>
         <div class="send">
-          <button class="btn primary" type="button" id="waBtn">Enviar por WhatsApp</button>
-          <button class="btn" type="button" id="mailBtn">Enviar por correo</button>
+          <button class="btn primary" type="button" id="sendBtn">Enviar respuestas</button>
+          <button class="btn" type="button" id="waBtn">Enviar también por WhatsApp</button>
           <button class="btn" type="button" id="copyBtn">Copiar mis respuestas</button>
         </div>
       </div>
@@ -355,33 +355,43 @@ function show(i){
   $("#savedNote").hidden = i >= total;
   window.scrollTo(0, 0);
   try { localStorage.setItem(KEY + "-step", String(i)); } catch(e) {}
-  if (i >= total) submitToDb();
 }
 
-let dbSentFor = null;
-async function submitToDb(){
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/albertochamorro88@gmail.com";
+let sending = false;
+async function sendAnswers(btn){
+  if (sending) return;
   const status = $("#dbStatus");
-  const snapshot = JSON.stringify(state);
-  if (dbSentFor === snapshot) return;
+  sending = true;
+  btn.disabled = true;
+  btn.textContent = "Enviando...";
   status.className = "status";
-  status.textContent = "Guardando tus respuestas...";
-  let db = null;
-  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch(e) { db = null; }
-  if (!db) {
-    status.textContent = "Para que lleguen a Grafiqo, envíalas por WhatsApp o por correo con los botones de abajo.";
-    return;
-  }
+  status.textContent = "Enviando tus respuestas...";
+  const payload = {
+    _subject: "Brief de marca Guapa · " + (state.nombre || "sin nombre"),
+    _template: "box",
+    _captcha: "false",
+    Nombre: state.nombre || "",
+    Contacto: state.contacto || "",
+    Respuestas: summary()
+  };
   try {
-    let docId;
-    try { docId = localStorage.getItem(KEY + "-doc"); } catch(e) {}
-    const ref = docId ? db.collection("respuestas").doc(docId) : db.collection("respuestas").doc();
-    await ref.set({ marca:"Guapa", nombre: state.nombre || "", contacto: state.contacto || "", respuestas: state, resumen: summary(), actualizado: new Date().toISOString() });
-    try { localStorage.setItem(KEY + "-doc", ref.id); } catch(e) {}
-    dbSentFor = snapshot;
+    const res = await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || String(data.success) === "false") throw new Error(data.message || "error");
     status.className = "status ok";
-    status.textContent = "Respuestas recibidas por Grafiqo. Si quieres, avísanos también por WhatsApp.";
+    status.textContent = "Listo. Tus respuestas llegaron a Grafiqo. Te escribiremos pronto.";
+    btn.textContent = "Enviado";
   } catch(e) {
-    status.textContent = "No se pudieron guardar automáticamente. Envíalas por WhatsApp o por correo con los botones de abajo.";
+    status.textContent = "No se pudieron enviar. Revisa tu conexión e inténtalo de nuevo, o envíalas por WhatsApp.";
+    btn.disabled = false;
+    btn.textContent = "Reintentar envío";
+  } finally {
+    sending = false;
   }
 }
 
@@ -391,10 +401,10 @@ document.addEventListener("change", e => collect(e.target));
 $("#nextBtn").addEventListener("click", () => show(Math.min(current + 1, SECTIONS.length)));
 $("#backBtn").addEventListener("click", () => show(Math.max(current - 1, -1)));
 document.addEventListener("click", async e => {
-  if (e.target.id === "waBtn") {
+  if (e.target.id === "sendBtn") {
+    sendAnswers(e.target);
+  } else if (e.target.id === "waBtn") {
     window.open("https://wa.me/?text=" + encodeURIComponent(summary()), "_blank", "noopener");
-  } else if (e.target.id === "mailBtn") {
-    location.href = "mailto:hello@grafiqo.co?subject=" + encodeURIComponent("Brief de marca Guapa") + "&body=" + encodeURIComponent(summary());
   } else if (e.target.id === "copyBtn") {
     try { await navigator.clipboard.writeText(summary()); e.target.textContent = "Copiado. Pégalo en WhatsApp o correo"; }
     catch(err) { e.target.textContent = "No se pudo copiar"; }
